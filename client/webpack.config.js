@@ -3,12 +3,6 @@ const WebpackPwaManifest = require('webpack-pwa-manifest');
 const path = require('path');
 const { InjectManifest } = require('workbox-webpack-plugin');
 
-// TODO: Add and configure workbox plugins for a service worker and manifest file.
-// add workbox plugins for a service worker and manifest file
-
-
-// TODO: Add CSS loaders and babel to webpack.
-
 module.exports = () => {
   return {
     mode: 'development',
@@ -19,35 +13,45 @@ module.exports = () => {
     output: {
       filename: '[name].bundle.js',
       path: path.resolve(__dirname, 'dist'),
+      publicPath: './' // Added publicPath
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template: "./index.html",
+        template: './index.html',
+        title: 'Jate - Just Another Text Editor',
       }),
+
+      new InjectManifest({
+        swSrc: './src-sw.js', // Path to your service worker file
+        swDest: 'src-sw.js', // Name of the generated service worker file
+      }),
+
       new WebpackPwaManifest({
-        name: "JATE",
-        short_name: "JATE",
-        description: "Just Another Text Editor",
-        display: "standalone",
-        background_color: "#ffffff",
-        theme_color: "#010101",
-        start_url: "/",
-        publicPath: "/",
         fingerprints: false,
-        inject: true,
+        name: 'JATE - Just Another Text Editor',
+        short_name: 'JATE',
+        description: 'A simple text editor for the web',
+        background_color: '#01579b',
+        theme_color: '#ffffff',
+        'theme-color': '#ffffff',
+        start_url: './',
+        display: 'standalone',
         icons: [
           {
-            src: path.resolve("src/images/logo.png"),
+            src: path.resolve('src/images/logo.png'),
             sizes: [96, 128, 192, 256, 384, 512],
-            destination: path.join("assets", "icons"),
+            destination: path.join('assets', 'icons'),
+          },
+          {
+            src: path.resolve('src/images/logo.png'),
+            size: '1024x1024',
+            ios: true,
           },
         ],
       }),
-      new InjectManifest({
-        swSrc: "./src-sw.js",
-        swDest: "src-sw.js",
-      }),
+     
     ],
+
 
     module: {
       rules: [
@@ -59,14 +63,12 @@ module.exports = () => {
           test: /\.js$/,
           exclude: /node_modules/,
           use: {
-            loader: "babel-loader",
+            loader: 'babel-loader',
             options: {
-              presets: ["@babel/preset-env"],
-
+              presets: ['@babel/preset-env'],
             },
           },
-        }
-        
+        },
       ],
     },
   };

@@ -24,7 +24,7 @@ butInstall.addEventListener('click', async () => {
     // Log the result
     console.log('👍', 'userChoice', result);
     // Reset the user choice
-    result = null;
+    butInstall.hidden = true;
 });
 
 // TODO: Add an handler for the `appinstalled` event

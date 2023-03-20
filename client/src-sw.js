@@ -24,13 +24,50 @@ warmStrategyCache({
   strategy: pageCache,
 });
 
+offlineFallback({
+  pageFallback: '/index.html',
+});
+
+
 registerRoute(({ request }) => request.mode === 'navigate', pageCache);
 
-// TODO: Implement asset caching
+// Cache CSS and JS assets
 registerRoute(
-  ({ url }) => url.origin === self.location.origin && url.pathname.endsWith('.js'),
+  ({ request }) => request.destination === 'style' || request.destination === 'script',
   new CacheFirst({
-    cacheName: 'js-cache',
+    cacheName: 'assets-cache',
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxAgeSeconds: 30 * 24 * 60 * 60,
+      }),
+    ],
+  })
+);
+
+// Cache image assets
+registerRoute(
+  ({ request }) => request.destination === 'image',
+  new CacheFirst({
+    cacheName: 'image-cache',
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxAgeSeconds: 30 * 24 * 60 * 60,
+      }),
+    ],
+  })
+);
+
+// Cache font assets
+registerRoute(
+  ({ request }) => request.destination === 'font',
+  new CacheFirst({
+    cacheName: 'font-cache',
     plugins: [
       new CacheableResponsePlugin({
         statuses: [0, 200],
