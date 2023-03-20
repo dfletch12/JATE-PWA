@@ -13,8 +13,6 @@ window.addEventListener('beforeinstallprompt', (event) => {
 
 // TODO: Implement a click event handler on the `butInstall` element
 butInstall.addEventListener('click', async () => {
-    // Hide the app provided install promotion
-    butInstall.hidden = true;
     // Show the install prompt
     const promptEvent = window.deferredPrompt;
     promptEvent.prompt();
@@ -33,4 +31,5 @@ butInstall.addEventListener('click', async () => {
 window.addEventListener('appinstalled', (event) => {
     // Log install to analytics
     console.log('👍', 'appinstalled', event);
+    window.deferredPrompt = null;
 });
